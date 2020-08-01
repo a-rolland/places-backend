@@ -83,6 +83,14 @@ router.post('/upload', uploader.single("imageUrl"), (req, res, next) => {
   res.json({ path: req.file.path });
 })
 
+router.get('/highlights', (req, res, next) => {
+  const quantity = Number(req.query.quantity)
+  console.log(quantity)
+  Place.find({highlight: {$eq: true}}).limit(quantity)
+  .then(resp => res.status(200).json(resp))
+  .catch(err => next(err))
+})
+
 router.delete('/:id', (req, res, next) => {
   // to do
   //req.params.id
