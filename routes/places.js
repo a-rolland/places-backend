@@ -13,17 +13,14 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/highlights', (req, res, next) => {
-
   const quantity = req.query.quantity
-
-  console.log(quantity)
-
-  // Place.find({highlight..... << crear aqui tu query})
-  //   .then(resp => res.status(200).json(resp))
-  //   .catch(err => next(err))
-
-  res.status(200).json({ message: "aguardando implementacion. " })
-
+  console.log("QUANTITY: ",quantity)
+  Place.find({highlight: {$eq: true}}).limit(quantity)
+  .then(resp => {
+    console.log("RESPONSE :",resp)
+    res.status(200).json(resp)
+  })
+  .catch(err => next(err))
 })
 
 router.get("/search", (req, res, next) => {
@@ -62,34 +59,23 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
-  Place.create(req.body)
-  .then(place => {
-    // console.log('Created new thing: ', aNewThing);
-    res.status(200).json(place)
-  })
-  .catch(err => next(err))
-})
-//FILE UPLOAD AQUI
-
-router.post('/upload', uploader.single("imageUrl"), (req, res, next) => {
-  // console.log('file is: ', req.file)
+router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {
   if (!req.file) {
-    next(new Error('No file uploaded!'));
+    next(new Error("No file uploaded!"));
     return;
   }
-  // get secure_url from the file object and save it in the
-  // variable 'secure_url', but this can be any name, just make sure you remember to use the same in frontend
+  const data = {
+    name: req.body.name,
+    description: req.body.description,
+    imageUrl: req.file.path,
+  };
+  Place.create(data)
+    .then((aNewThing) => {
+      res.status(200).json(aNewThing);
+    })
+    .catch((err) => next(err));
   res.json({ path: req.file.path });
-})
-
-router.get('/highlights', (req, res, next) => {
-  const quantity = Number(req.query.quantity)
-  console.log(quantity)
-  Place.find({highlight: {$eq: true}}).limit(quantity)
-  .then(resp => res.status(200).json(resp))
-  .catch(err => next(err))
-})
+});
 
 router.delete('/:id', (req, res, next) => {
   // to do
