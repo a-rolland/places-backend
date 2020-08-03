@@ -14,10 +14,8 @@ router.get('/', (req, res, next) => {
 
 router.get('/highlights', (req, res, next) => {
   const quantity = req.query.quantity
-  console.log("QUANTITY: ",quantity)
   Place.find({highlight: {$eq: true}}).limit(quantity)
   .then(resp => {
-    console.log("RESPONSE :",resp)
     res.status(200).json(resp)
   })
   .catch(err => next(err))
@@ -46,7 +44,6 @@ router.get("/search", (req, res, next) => {
   Place.find(query)
     .then(resp => res.status(200).json(resp))
     .catch(err => next(err))
-
 })
 
 router.get('/:id', (req, res, next) => {
@@ -68,7 +65,11 @@ router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {
     name: req.body.name,
     description: req.body.description,
     imageUrl: req.file.path,
+    loc: {
+      type: req.body.type,
+      coordinates: [parseFloat(req.body.lat), parseFloat(req.body.lng)]}
   };
+  console.log("DATA : ", data.loc)
   Place.create(data)
     .then((aNewThing) => {
       res.status(200).json(aNewThing);

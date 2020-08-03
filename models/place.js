@@ -14,7 +14,7 @@ const schema = new Schema(
         required: true
       }, 
       coordinates: {
-        type: [Number], // LATITUD , LONGITUD
+        type: [], // LATITUD , LONGITUD
         required: true
       }
     },
