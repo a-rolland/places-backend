@@ -79,10 +79,12 @@ router.post("/upload", uploader.single("imageUrl"), (req, res, next) => {
 });
 
 router.delete('/:id', (req, res, next) => {
-  // to do
-  //req.params.id
-  res.status(200).json({ message: "DELETE aguardando implementacion. " })
-
+  const id = req.params.id
+  Place.findByIdAndRemove(id)
+  .then(() => {
+    res.status(200).json({ message: "DELETE aguardando implementacion. " })
+  })
+  .catch(err => next(err))
 })
 
 router.patch('/:id', (req, res, next) => {
